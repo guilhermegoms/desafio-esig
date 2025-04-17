@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: infraesig
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+#     containers:
+ #      - name: jenkins
+  #       image: guilhermegomes/jenkins-jolokia:latest  # Sua imagem aqui!
+   #      ports:
+    #       - containerPort: 8080 # Porta padrão do Jenkin
+     containers:
+        - name: jenkins
+          image: guilhermegoms/jenkins-jolokia:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080

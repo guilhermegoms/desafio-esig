@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: node-exporter
+  namespace: infraesig 
+  labels:
+    app: node-exporter
+spec:
+  selector:
+    app: node-exporter
+  ports:
+    - name: http
+      port: 9100
+      targetPort: 9100
+  type: ClusterIP #  Ou NodePort se precisar acessar de fora

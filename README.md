@@ -325,7 +325,7 @@ Como o cluster foi criado com mapeamento de portas do `k3d`, os acessos locais f
 - Jenkins: [http://<Ip_do_node>:30001/jenkins](http://localhost:30000/jenkins)
 - Jolokia: [http://<Ip_do_node>:30001/jolokia](http://localhost:30000/jolokia)
 - Prometheus: [http://<Ip_do_node>:30005](http://localhost:30001)
-- Grafana: [http://<Ip_do_node>:30001](http://localhost:30001)
+- Grafana: [http://<Ip_do_node>:30002](http://localhost:30001)
 
 Use a interface do Prometheus para visualizar os targets de scrape e consultar métricas como:
 

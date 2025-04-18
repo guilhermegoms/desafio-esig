@@ -12,4 +12,5 @@ spec:
     - name: http
       port: 9100
       targetPort: 9100
-  type: ClusterIP #  Ou NodePort se precisar acessar de fora
+  type: ClusterIP 
+  

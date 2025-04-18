@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-pvc
+  namespace: infraesig #  Certifique-se de usar o namespace correto
+spec:
+  accessModes:
+    - ReadWriteOnce #  Ou ReadWriteMany se precisar ser acessado por múltiplos Pods
+  resources:
+    requests:
+      storage: 2Gi #  Ajuste o tamanho conforme necessário

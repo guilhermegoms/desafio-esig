@@ -1,5 +1,5 @@
 services:
-  jenkins-tomcat:
+  jenkins:
     build: .
     container_name: jenkins-tomcat
     ports:

@@ -13,14 +13,24 @@ spec:
       labels:
         app: jenkins
     spec:
-#     containers:
- #      - name: jenkins
-  #       image: guilhermegomes/jenkins-jolokia:latest  # Sua imagem aqui!
-   #      ports:
-    #       - containerPort: 8080 # Porta padrão do Jenkin
      containers:
         - name: jenkins
           image: guilhermegoms/jenkins-jolokia:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
+ #           
+ #       - name: jolokia-exporter
+ #         image: registry.hub.docker.com/oliverdrot/jolokia-exporter:latest # Ou a imagem que você preferir
+ #         args:
+ #           - "--jolokia-host"
+ #           - "localhost"
+ #           - "--jolokia-port"
+ #           - "8778" 
+ #           - "--username" 
+ #           - "admin"
+ #           - "--password"
+ #           - "admin"
+ #         ports:
+ #           - containerPort: 9779
+ #             name: prometheus

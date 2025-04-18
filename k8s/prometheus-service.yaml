@@ -2,11 +2,14 @@ apiVersion: v1
 kind: Service
 metadata:
   name: prometheus
+  namespace: infraesig
 spec:
-  selector:
-    app: prometheus
+  type: NodePort
   ports:
-    - protocol: TCP
+    - name: web
+      protocol: TCP
       port: 9090
       targetPort: 9090
-  type: NodePort # Para acessar fora do cluster (ou ClusterIP se usar Ingress)
+      nodePort: 30005 #  Use esta porta no navegador!
+  selector:
+    app: prometheus

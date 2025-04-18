@@ -1,44 +1,51 @@
 #!/bin/bash
 
-set -e
+echo "🔧 Iniciando preparação do ambiente..."
 
-echo "🔧 Atualizando pacotes..."
+# Atualiza pacotes
 sudo apt update && sudo apt upgrade -y
 
-echo "🐳 Instalando Docker..."
-sudo apt install -y docker.io
-sudo systemctl enable docker
-sudo systemctl start docker
-sudo usermod -aG docker $USER
+# Instala dependências básicas
+sudo apt install -y curl apt-transport-https ca-certificates gnupg lsb-release software-properties-common
 
-echo "📦 Instalando Docker Compose..."
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" \
-  -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-docker-compose --version
+# Instala Docker
+if ! command -v docker &> /dev/null; then
+  echo "📦 Instalando Docker..."
+  curl -fsSL https://get.docker.com -o get-docker.sh
+  sh get-docker.sh
+  sudo usermod -aG docker $USER
+fi
 
-echo "☸️ Instalando kubectl..."
-sudo apt install -y apt-transport-https ca-certificates curl
-sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] \
-  https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
-sudo apt update
-sudo apt install -y kubectl
+# Instala Docker Compose
+if ! command -v docker-compose &> /dev/null; then
+  echo "📦 Instalando Docker Compose..."
+  sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" \
+    -o /usr/local/bin/docker-compose
+  sudo chmod +x /usr/local/bin/docker-compose
+fi
 
-echo "📦 Instalando Minikube..."
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
-rm minikube-linux-amd64
+# Instala kubectl
+if ! command -v kubectl &> /dev/null; then
+  echo "📦 Instalando kubectl..."
+  curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+  sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+  rm kubectl
+fi
 
-echo "🧰 Instalando dependências adicionais..."
-sudo apt install -y conntrack socat
+# Instala k3d
+if ! command -v k3d &> /dev/null; then
+  echo "📦 Instalando k3d..."
+  curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+fi
 
-echo "🚀 Inicializando Minikube..."
-minikube start --driver=docker
+# Cria cluster k3d
+echo "🚀 Criando cluster k3d..."
+k3d cluster create jenkins-cluster --api-port 6550 -p "8888:80@loadbalancer"
 
-echo "✅ Instalação finalizada!"
-echo "⚠️ IMPORTANTE: reinicie sua sessão (logout/login) para que a permissão do Docker funcione."
+# Ativa o contexto no kubectl
+k3d kubeconfig merge jenkins-cluster --switch
 
-echo "💡 Agora você pode usar:"
-echo "- docker-compose up -d"
-echo "- kubectl apply -f k8s/"
+# Confirma nodes
+kubectl get nodes
+
+echo "✅ Ambiente pronto! Jenkins será acessível via: http://localhost:8888"
